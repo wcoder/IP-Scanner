@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace IpScanner
@@ -45,18 +44,18 @@ namespace IpScanner
             }
         }
 
-        private static async void CheckIpAddress(IPAddress address)
+        private static void CheckIpAddress(IPAddress address)
         {
             var isUnknown = false;
-            var logMessage = new StringBuilder(address + "\t-\t");
+            var logMessage = address + "\t-\t";
 
             try
             {
-                logMessage.Append(GetStatusOfPingSafely(address) + "  \t-\t");
+                logMessage += GetStatusOfPingSafely(address) + "  \t-\t";
 
-                var host = await Dns.GetHostEntryAsync(address);
+                var host = Dns.GetHostEntry(address);
 
-                logMessage.Append(host.HostName);
+                logMessage += host.HostName;
             }
             catch (Exception)
             {
@@ -65,7 +64,7 @@ namespace IpScanner
             finally
             {
                 if (!isUnknown)
-                    Print?.Invoke(null, logMessage.ToString());
+                    Print?.Invoke(null, logMessage);
             }
         }
 
