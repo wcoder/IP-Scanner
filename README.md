@@ -11,4 +11,12 @@ Build `exe` for Window x64:
 ```
 dotnet publish -c Release -r win10-x64
 ```
+Build 'bin' for MacOS x64:
+```
+dotnet publish -c Release -r osx-x64
+```
+Build `bin` for Ubuntu x64:
+```
+dotnet publish -c Release -r ubuntu-x64
+```
 > Additional info about PID: https://docs.microsoft.com/en-us/dotnet/core/rid-catalog
