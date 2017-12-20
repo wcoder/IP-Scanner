@@ -7,15 +7,20 @@ Easy command to start app:
 dotnet run --project src/IpScanner/IpScanner.csproj 192.168.0.1 192.168.0.254
 ```
 
-Build `exe` for Window x64:
+## Build for publish:
+```
+cd src
+```
+
+Window x64:
 ```
 dotnet publish -c Release -r win10-x64
 ```
-Build 'bin' for MacOS x64:
+MacOS x64:
 ```
 dotnet publish -c Release -r osx-x64
 ```
-Build `bin` for Ubuntu x64:
+Ubuntu x64:
 ```
 dotnet publish -c Release -r ubuntu-x64
 ```
