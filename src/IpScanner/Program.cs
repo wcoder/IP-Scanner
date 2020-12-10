@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.NetworkInformation;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace IpScanner
@@ -10,15 +9,14 @@ namespace IpScanner
     {
         private static bool IsDisplayUnknownHost => false; // TODO: add ability for change from args
 
-        private static event EventHandler<string> Print;
+        private static Action<string?> Print { get; } = message => Console.WriteLine(message);
 
         private static void Main(string[] args)
         {
             try
             {
-                if (args.Length != 2) throw new Exception("Need two arguments: <Start IP> <End IP>");
-
-                Print += (sender, s) => Console.WriteLine(s);
+                if (args.Length != 2)
+                    throw new Exception("Need two arguments: <Start IP> <End IP>");
 
                 var startIp = IPAddress.Parse(args[0]);
                 var endIp = IPAddress.Parse(args[1]);
@@ -28,7 +26,11 @@ namespace IpScanner
                 DisplayHeader(startIp, endIp);
                 DisplayHostDetails(Dns.GetHostEntry(Dns.GetHostName()));
 
-                if (Parallel.ForEach(GenerateIpAddressesList(startIp, endIp), CheckIpAddress).IsCompleted)
+                var result = Parallel.ForEach(
+                    NetworkUtils.GenerateIpAddressesList(startIp, endIp),
+                    CheckIpAddress);
+
+                if (result.IsCompleted)
                 {
                     Console.WriteLine("Finish!");
                 }
@@ -37,25 +39,49 @@ namespace IpScanner
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error: {e.Message}");
+                Print($"Error: {e}");
 #if DEBUG
                 Console.ReadKey();
 #endif
             }
         }
 
+        private static void DisplayHeader(IPAddress startIp, IPAddress endIp)
+        {
+            Print($"Start IP: {startIp}");
+            Print($"End IP:   {endIp}\n");
+        }
+
+        private static void DisplayHostDetails(IPHostEntry host)
+        {
+            Print($"Current HOST:\n\t{host.HostName}\nIP addresses:");
+
+            foreach (var ipAddress in host.AddressList)
+            {
+                Print($"\t{ipAddress}");
+            }
+
+            Print(string.Empty);
+        }
+
         private static void CheckIpAddress(IPAddress address)
         {
             var isUnknown = false;
-            var logMessage = address + "\t-\t";
+            var messageBuilder = new StringBuilder()
+                .Append(address)
+                .Append("\t-\t");
 
             try
             {
-                logMessage += GetStatusOfPingSafely(address) + "  \t-\t";
+                var status = NetworkUtils.GetStatusOfPingSafely(address);
+
+                messageBuilder
+                    .Append(status)
+                    .Append("  \t-\t");
 
                 var host = Dns.GetHostEntry(address);
 
-                logMessage += host.HostName;
+                messageBuilder.Append(host.HostName);
             }
             catch (Exception)
             {
@@ -64,65 +90,7 @@ namespace IpScanner
             finally
             {
                 if (!isUnknown)
-                    Print?.Invoke(null, logMessage);
-            }
-        }
-
-        private static IEnumerable<IPAddress> GenerateIpAddressesList(IPAddress startIp, IPAddress endIp)
-        {
-            yield return startIp;
-            IPAddress iph = startIp;
-            while (true)
-            {
-                iph = Increament(iph);
-
-                if (iph.Equals(endIp))
-                    break;
-
-                yield return iph;
-            }
-            yield return endIp;
-        }
-
-        private static IPAddress Increament(IPAddress ip)
-        {
-            var bytes = ip.GetAddressBytes();
-
-            if (++bytes[3] == 0)
-                if (++bytes[2] == 0)
-                    if (++bytes[1] == 0)
-                        ++bytes[0];
-
-            return new IPAddress(bytes);
-        }
-
-        private static void DisplayHeader(IPAddress startIp, IPAddress endIp)
-        {
-            Console.WriteLine($"Start IP: {startIp}");
-            Console.WriteLine($"End IP:   {endIp}\n");
-        }
-
-        private static void DisplayHostDetails(IPHostEntry host)
-        {
-            Console.WriteLine($"Current HOST:\n\t{host.HostName}\nIP addresses:");
-
-            foreach (var ipAddress in host.AddressList)
-            {
-                Console.WriteLine($"\t{ipAddress}");
-            }
-
-            Console.WriteLine(string.Empty);
-        }
-
-        private static string GetStatusOfPingSafely(IPAddress ip)
-        {
-            try
-            {
-                return new Ping().Send(ip).Status.ToString();
-            }
-            catch (Exception e)
-            {
-                return $"<ERROR> {e.Message}";
+                    Print(messageBuilder.ToString());
             }
         }
     }
