@@ -16,6 +16,34 @@
                 "_id": "build",
                 "isDefault": false
             }
+        },
+        {
+            "label": "publish",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "publish",
+                "${workspaceRoot}/src/IpScanner/IpScanner.csproj",
+                "--configuration",
+                "Release",
+                "--runtime",
+                "${input:publishRuntime}",
+                "--self-contained",
+            ],
+            "problemMatcher": "$msCompile",
         }
+    ],
+    "inputs": [
+        {
+          "type": "pickString",
+          "id": "publishRuntime",
+          "description": "Publishes the application for a given runtime",
+          "options": [
+            "win10-x64",
+            "osx-x64",
+            "ubuntu-x64",
+          ],
+          "default": "component"
+        },
     ]
 }
