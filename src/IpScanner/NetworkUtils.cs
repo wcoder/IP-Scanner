@@ -1,52 +1,49 @@
-using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.NetworkInformation;
 
-namespace IpScanner
+namespace IpScanner;
+
+public static class NetworkUtils
 {
-    public static class NetworkUtils
+    public static IEnumerable<IPAddress> GenerateIpAddressesList(
+        IPAddress startIp,
+        IPAddress endIp)
     {
-        public static IEnumerable<IPAddress> GenerateIpAddressesList(
-            IPAddress startIp,
-            IPAddress endIp)
+        yield return startIp;
+        IPAddress iph = startIp;
+        while (true)
         {
-            yield return startIp;
-            IPAddress iph = startIp;
-            while (true)
-            {
-                iph = Increment(iph);
+            iph = Increment(iph);
 
-                if (iph.Equals(endIp))
-                    break;
+            if (iph.Equals(endIp))
+                break;
 
-                yield return iph;
-            }
-            yield return endIp;
+            yield return iph;
         }
+        yield return endIp;
+    }
 
-        public static IPAddress Increment(IPAddress ip)
+    public static IPAddress Increment(IPAddress ip)
+    {
+        var bytes = ip.GetAddressBytes();
+
+        if (++bytes[3] == 0)
+            if (++bytes[2] == 0)
+                if (++bytes[1] == 0)
+                    ++bytes[0];
+
+        return new IPAddress(bytes);
+    }
+
+    public static string GetStatusOfPingSafely(IPAddress ip)
+    {
+        try
         {
-            var bytes = ip.GetAddressBytes();
-
-            if (++bytes[3] == 0)
-                if (++bytes[2] == 0)
-                    if (++bytes[1] == 0)
-                        ++bytes[0];
-
-            return new IPAddress(bytes);
+            return new Ping().Send(ip).Status.ToString();
         }
-
-        public static string GetStatusOfPingSafely(IPAddress ip)
+        catch (Exception e)
         {
-            try
-            {
-                return new Ping().Send(ip).Status.ToString();
-            }
-            catch (Exception e)
-            {
-                return $"<ERROR> {e.Message}";
-            }
+            return $"<ERROR> {e.Message}";
         }
     }
 }

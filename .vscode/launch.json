@@ -10,13 +10,17 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceRoot}/src/IpScanner/bin/Debug/netcoreapp2.0/IpScanner.dll",
+            "program": "${workspaceRoot}/src/IpScanner/bin/Debug/net6.0/IpScanner.dll",
             "args": ["192.168.0.1", "192.168.0.254"],
             "cwd": "${workspaceRoot}/src/IpScanner",
             // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
             "console": "internalConsole",
             "stopAtEntry": false,
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "justMyCode": false,
+            // "logging": {
+            //     "moduleLoad": false
+            // }
         },
         {
             "name": ".NET Core Attach",

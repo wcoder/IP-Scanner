@@ -1,7 +1,7 @@
 <p align="center"><img src="logo/verticalversion.png" alt="IP-Scanner" height="200px"></p>
 
 # IP-Scanner
-Simple IP subset scanner on .NET Core 2.0. Available for Windows, Linux and Mac.
+Simple IP subset scanner on .NET 6. Available for Windows, Linux and Mac.
 
 ## Use
 Easy command to start app:
