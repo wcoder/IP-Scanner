@@ -10,7 +10,7 @@ dotnet run --project src/IpScanner/IpScanner.csproj 192.168.0.1 192.168.0.254
 ```
 Or you can add third parameter to only display the available devices.
 ```
-dotnet run --project src/IpScanner/IpScanner.csproj 192.168.0.1 192.168.0.254 --unknown-hosts
+dotnet run --project src/IpScanner/IpScanner.csproj 192.168.0.1 192.168.0.254 -u
 ```
 
 ## Build for publish:
