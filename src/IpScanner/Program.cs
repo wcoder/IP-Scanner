@@ -5,7 +5,7 @@ namespace IpScanner;
 
 internal static class Program
 {
-    private static bool IsDisplayUnknownHost => false; // TODO: add ability for change from args
+    private static bool IsDisplayUnknownHost = true;
 
     private static Action<string?> Print { get; } = Console.WriteLine;
 
@@ -13,8 +13,15 @@ internal static class Program
     {
         try
         {
-            if (args.Length != 2)
+            if (args.Length < 2)
                 throw new Exception("Need two arguments: <Start IP> <End IP>");
+
+            if (args.Length == 3)
+            {
+                if (args[2] != "-u")
+                    throw new Exception("Invalid flag found.");
+                IsDisplayUnknownHost = args[2] != "-u";
+            }
 
             var startIp = IPAddress.Parse(args[0]);
             var endIp = IPAddress.Parse(args[1]);
