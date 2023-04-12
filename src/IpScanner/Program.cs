@@ -18,9 +18,9 @@ internal static class Program
 
             if (args.Length == 3)
             {
-                if (args[2] != "--unknown-hosts")
+                if (args[2] != "-u")
                     throw new Exception("Invalid flag found.");
-                IsDisplayUnknownHost = args[2] == "--unknown-hosts";
+                IsDisplayUnknownHost = args[2] != "-u";
             }
 
             var startIp = IPAddress.Parse(args[0]);
