@@ -18,10 +18,10 @@ internal static class Program
 
 			if (args.Length == 3)
 			{
-				var isValidFlag = bool.TryParse(args[2], out var isDisplayUnknownHost);
-				if (!isValidFlag)
+				var isValidFlag = char.TryParse(args[2], out var isDisplayUnknownHost);
+				if (!isValidFlag || isDisplayUnknownHost != 'e')
 					throw new Exception("Invalid flag found.");
-				IsDisplayUnknownHost = isDisplayUnknownHost;
+				IsDisplayUnknownHost = true;
 			}
 
 			var startIp = IPAddress.Parse(args[0]);
